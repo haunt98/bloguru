@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package proto.author.v1;
+
+option go_package = "github.com/haunt98/bloguru/gen/author/v1";
+
+message Author {
+    string id = 1;
+    string name = 2;
+    string email = 3;
+}
+
+message GetRequest {
+    string id = 1;
+}
+
+message GetResponse {
+    GetResponseData data = 1;
+}
+
+message GetResponseData {
+    Author author = 1;
+}
+
+service AuthorService {
+    rpc Get(GetRequest) returns (GetResponse) {}
+}
