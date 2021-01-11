@@ -6,12 +6,10 @@ import (
 	"net"
 	"net/http"
 
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	authorv1 "github.com/haunt98/bloguru/gen/author/v1"
 	"github.com/haunt98/bloguru/internal/fx/authorfx"
 	"go.uber.org/fx"
-
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-
-	authorv1 "github.com/haunt98/bloguru/gen/author/v1"
 	"google.golang.org/grpc"
 )
 
