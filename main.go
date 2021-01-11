@@ -23,6 +23,7 @@ func main() {
 }
 
 func initServer(lc fx.Lifecycle, authorServer authorv1.ServiceServer) error {
+	// Start gRPC server
 	lis, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		return fmt.Errorf("failed to listen network: %w", err)
@@ -41,7 +42,6 @@ func initServer(lc fx.Lifecycle, authorServer authorv1.ServiceServer) error {
 	})
 
 	// gRPC-Gateway proxies the requests
-
 	opts := []grpc.DialOption{
 		grpc.WithBlock(),
 		grpc.WithInsecure(),
