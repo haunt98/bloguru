@@ -2,53 +2,67 @@ package main
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"net"
 	"net/http"
+
+	"github.com/haunt98/bloguru/internal/fx/authorfx"
+	"go.uber.org/fx"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 
 	authorv1 "github.com/haunt98/bloguru/gen/author/v1"
-	"github.com/haunt98/bloguru/internal/author"
-
 	"google.golang.org/grpc"
 )
 
 func main() {
+	fx.New(
+		authorfx.Module,
+		fx.Invoke(initGRPCServer),
+	).Run()
+}
+
+func initGRPCServer(lc fx.Lifecycle, authorServer authorv1.ServiceServer) error {
 	lis, err := net.Listen("tcp", ":8080")
 	if err != nil {
-		log.Fatalln("Failed to listen:", err)
+		return fmt.Errorf("failed to listen network: %w", err)
 	}
 
-	authorServer := author.NewServer()
 	grpcServer := grpc.NewServer()
 	authorv1.RegisterServiceServer(grpcServer, authorServer)
 	go func() {
 		grpcServer.Serve(lis)
 	}()
+	lc.Append(fx.Hook{
+		OnStop: func(ctx context.Context) error {
+			grpcServer.GracefulStop()
+			return nil
+		},
+	})
 
 	// gRPC-Gateway proxies the requests
-	conn, err := grpc.DialContext(
-		context.Background(),
-		"0.0.0.0:8080",
+
+	opts := []grpc.DialOption{
 		grpc.WithBlock(),
 		grpc.WithInsecure(),
-	)
-	if err != nil {
-		log.Fatalln("Failed to dial server:", err)
 	}
-
 	mux := runtime.NewServeMux()
-	if err := authorv1.RegisterServiceHandler(context.Background(), mux, conn); err != nil {
-		log.Fatal(err)
+	if err := authorv1.RegisterServiceHandlerFromEndpoint(context.Background(), mux, ":8080", opts); err != nil {
+		return fmt.Errorf("failed to register service handler authorv1: %w", err)
 	}
 
-	httpServer := &http.Server{
+	grpcGatewayServer := &http.Server{
 		Addr:    ":8090",
 		Handler: mux,
 	}
+	go func() {
+		grpcGatewayServer.ListenAndServe()
+	}()
+	lc.Append(fx.Hook{
+		OnStop: func(ctx context.Context) error {
+			return grpcGatewayServer.Shutdown(ctx)
+		},
+	})
 
-	if err := httpServer.ListenAndServe(); err != nil {
-		log.Fatal(err)
-	}
+	return nil
 }
