@@ -22,6 +22,6 @@ message GetResponseData {
     Author author = 1;
 }
 
-service AuthorService {
+service Service {
     rpc Get(GetRequest) returns (GetResponse) {}
 }

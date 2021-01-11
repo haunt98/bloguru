@@ -3,5 +3,5 @@ config_version: 3
 
 http:
   rules:
-    - selector: proto.author.v1.AuthorService.Get
-      get: "/v1/author"
+    - selector: proto.author.v1.Service.Get
+      get: "/v1/author/{id}"

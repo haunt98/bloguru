@@ -13,83 +13,83 @@ import (
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion7
 
-// AuthorServiceClient is the client API for AuthorService service.
+// ServiceClient is the client API for Service service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type AuthorServiceClient interface {
+type ServiceClient interface {
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 }
 
-type authorServiceClient struct {
+type serviceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewAuthorServiceClient(cc grpc.ClientConnInterface) AuthorServiceClient {
-	return &authorServiceClient{cc}
+func NewServiceClient(cc grpc.ClientConnInterface) ServiceClient {
+	return &serviceClient{cc}
 }
 
-func (c *authorServiceClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
+func (c *serviceClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
 	out := new(GetResponse)
-	err := c.cc.Invoke(ctx, "/proto.author.v1.AuthorService/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.author.v1.Service/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AuthorServiceServer is the server API for AuthorService service.
-// All implementations must embed UnimplementedAuthorServiceServer
+// ServiceServer is the server API for Service service.
+// All implementations must embed UnimplementedServiceServer
 // for forward compatibility
-type AuthorServiceServer interface {
+type ServiceServer interface {
 	Get(context.Context, *GetRequest) (*GetResponse, error)
-	mustEmbedUnimplementedAuthorServiceServer()
+	mustEmbedUnimplementedServiceServer()
 }
 
-// UnimplementedAuthorServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedAuthorServiceServer struct {
+// UnimplementedServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedServiceServer struct {
 }
 
-func (UnimplementedAuthorServiceServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
+func (UnimplementedServiceServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedAuthorServiceServer) mustEmbedUnimplementedAuthorServiceServer() {}
+func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}
 
-// UnsafeAuthorServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AuthorServiceServer will
+// UnsafeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ServiceServer will
 // result in compilation errors.
-type UnsafeAuthorServiceServer interface {
-	mustEmbedUnimplementedAuthorServiceServer()
+type UnsafeServiceServer interface {
+	mustEmbedUnimplementedServiceServer()
 }
 
-func RegisterAuthorServiceServer(s grpc.ServiceRegistrar, srv AuthorServiceServer) {
-	s.RegisterService(&_AuthorService_serviceDesc, srv)
+func RegisterServiceServer(s grpc.ServiceRegistrar, srv ServiceServer) {
+	s.RegisterService(&_Service_serviceDesc, srv)
 }
 
-func _AuthorService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthorServiceServer).Get(ctx, in)
+		return srv.(ServiceServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.author.v1.AuthorService/Get",
+		FullMethod: "/proto.author.v1.Service/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthorServiceServer).Get(ctx, req.(*GetRequest))
+		return srv.(ServiceServer).Get(ctx, req.(*GetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _AuthorService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.author.v1.AuthorService",
-	HandlerType: (*AuthorServiceServer)(nil),
+var _Service_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.author.v1.Service",
+	HandlerType: (*ServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Get",
-			Handler:    _AuthorService_Get_Handler,
+			Handler:    _Service_Get_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
