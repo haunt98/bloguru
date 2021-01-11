@@ -9,7 +9,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 
 	authorv1 "github.com/haunt98/bloguru/gen/author/v1"
-	"github.com/haunt98/bloguru/pkg/author"
+	"github.com/haunt98/bloguru/internal/author"
 
 	"google.golang.org/grpc"
 )
