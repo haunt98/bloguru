@@ -18,11 +18,11 @@ import (
 func main() {
 	fx.New(
 		authorfx.Module,
-		fx.Invoke(initGRPCServer),
+		fx.Invoke(initServer),
 	).Run()
 }
 
-func initGRPCServer(lc fx.Lifecycle, authorServer authorv1.ServiceServer) error {
+func initServer(lc fx.Lifecycle, authorServer authorv1.ServiceServer) error {
 	lis, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		return fmt.Errorf("failed to listen network: %w", err)
